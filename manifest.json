@@ -1,0 +1,10 @@
+{
+  "name": "Spielplan 26 Ahaus",
+  "short_name": "Ahaus 26",
+  "description": "Spielplan des TC Grün-Weiß Ahaus – Sommer 2026",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f1117",
+  "theme_color": "#0f1117",
+  "icons": [{"src": "logo2.png", "sizes": "any", "type": "image/png"}]
+}
