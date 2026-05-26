@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>TC 1928 Ochtrup – Spielplan 2026</title>
+<title>TC Grün-Weiß Ahaus – Spielplan 2026</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="logo2.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -293,6 +293,9 @@
     color: #8aadd4;
     margin: 4px 0 2px;
   }
+  .report-result.win  { color: #78b890; }
+  .report-result.loss { color: #b87070; }
+  .report-result.draw { color: #d4b84a; }
   .report-date { font-size: 0.78rem; color: #9095b0; }
   .report-section {
     font-family: 'Bebas Neue', sans-serif;
@@ -472,8 +475,8 @@
 
 <div class="header">
   <div class="header-title">
-    <img src="https://raw.githubusercontent.com/a-c-d-c/ochtrup-spielplan-pro/main/logo.png" class="header-logo" alt="TC 1928 Ochtrup Logo">
-    <h1>TC 1928 Ochtrup</h1>
+    <img src="logo.png" class="header-logo" alt="TC Grün-Weiß Ahaus Logo" onerror="this.style.display='none'">
+    <h1>TC Grün-Weiß Ahaus</h1>
   </div>
   <p>Spielplan · Münsterland · Sommer 2026</p>
 </div>
@@ -540,12 +543,11 @@
 
 <script>
 /* ── Konfiguration ─────────────────────────────────────────── */
-/* ── Dynamische Mannschaftsliste ───────────────────────────── */
-const CLUB_NAME      = 'Ochtrup';
-const CLUB_TEAMS_URL = 'https://wtv.liga.nu/cgi-bin/WebObjects/nuLigaTENDE.woa/wa/clubTeams?club=26831';
-const LS_STATE       = 'spielplan-state';
-const LS_AUSWAHL     = 'spielplan-meine-auswahl';
-const LS_LEAGUES     = 'spielplan-leagues';
+const CLUB_NAME      = 'Ahaus';
+const CLUB_TEAMS_URL = 'https://wtv.liga.nu/cgi-bin/WebObjects/nuLigaTENDE.woa/wa/clubTeams?club=26802';
+const LS_STATE       = 'ahaus-state';
+const LS_AUSWAHL     = 'ahaus-meine-auswahl';
+const LS_LEAGUES     = 'ahaus-leagues';
 
 // Kategorie-Paletten — hell → dunkel (jung → alt)
 const PALETTE_JUGEND = [
@@ -624,7 +626,7 @@ function buildTeamCSS(leagues) {
 }
 
 function formatTeamLabel(label) {
-  const m = label.match(/^(.*?)\s+((?:Kreis|Bezirks|M\u00fcnsterland|Verbands|Landes|Westfalen|Generali)\S*.*)$/i);
+  const m = label.match(/^(.*?)\s+((?:Kreis|Bezirks|Münsterland|Verbands|Landes|Westfalen|Generali)\S*.*)$/i);
   if (m) return esc(m[1]) + '<br><span style="font-size:0.78rem;opacity:0.8">' + esc(m[2]) + '</span>';
   return esc(label);
 }
@@ -837,12 +839,10 @@ function parseLeague(html, league) {
 
     if (!texts.some(t => t.includes(CLUB_NAME))) continue;
 
-    /* Zuletzt gesehenes Datum und Uhrzeit verwenden */
     const dateStr = lastDateStr;
     const timeStr = lastTimeStr;
     if (!dateStr) continue;
 
-    /* Die ersten zwei Team-ähnlichen Zellen = Heim / Gast */
     const teamTexts = texts.filter(looksLikeTeam);
     if (teamTexts.length < 2) continue;
 
@@ -851,7 +851,6 @@ function parseLeague(html, league) {
 
     if (!homeTeam.includes(CLUB_NAME) && !awayTeam.includes(CLUB_NAME)) continue;
 
-    /* Ergebnis: erste Zelle die genau X:Y enthält (keine Sub-Ergebnisse) */
     let result = 'offen';
     for (const t of texts) {
       if (/^\d+:\d+$/.test(t)) { result = t; break; }
@@ -862,7 +861,6 @@ function parseLeague(html, league) {
       }
     }
 
-    /* Verlegungshinweis erkennen */
     let note = '';
     for (const t of texts) {
       if (t.toLowerCase().startsWith('ursprünglich')) { note = t; break; }
@@ -870,7 +868,6 @@ function parseLeague(html, league) {
 
     if (result === 'zurückgezogen') continue;
 
-    /* Spielbericht-Link ("anzeigen") extrahieren */
     let reportUrl = '';
     for (const cell of cells) {
       const a = cell.querySelector('a[href*="meetingReport"]');
@@ -926,7 +923,6 @@ async function loadAllData() {
   refreshBtn.disabled = true;
   refreshBtn.classList.add('spinning');
 
-  /* Alle Ligen parallel laden – jede wird sofort angezeigt sobald sie fertig ist */
   allMatches = [];
   const errors = [];
 
@@ -936,7 +932,7 @@ async function loadAllData() {
       leagueHtml[league.team] = html;
       league.rank = extractClubRank(html);
       const rankEl = document.getElementById('rank-' + league.team);
-      if (rankEl && league.rank) rankEl.textContent = 'Rang ' + league.rank;
+      if (rankEl && league.rank) rankEl.textContent = 'Rang ' + league.rank;
       allMatches = [...allMatches, ...parseLeague(html, league)]
         .sort((a, b) => a.date - b.date);
       renderNextMatch();
@@ -1265,8 +1261,7 @@ function showTable(team) {
     } else {
       const cells = [...row.querySelectorAll('td')];
       if (cells.length < 3) continue;
-      const rowText = row.textContent;
-      const isClub = rowText.includes(CLUB_NAME);
+      const isClub = row.textContent.includes(CLUB_NAME);
       tableHtml += `<tr${isClub ? ' class="club-row"' : ''}>`;
       tableHtml += cells.map(c => `<td>${esc(c.textContent.trim())}</td>`).join('');
       tableHtml += '</tr>';
@@ -1321,14 +1316,12 @@ function renderReport(html, m) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   let out = '';
 
-  /* ── Header ── */
   out += `<div class="report-match-header">
     <div class="report-teams">${esc(m.homeTeam)} <span style="color:#555a7a">vs.</span> ${esc(m.awayTeam)}</div>
-    <div class="report-result">${m.result}</div>
+    <div class="report-result ${resultCls(m.result, m.isHome)}">${m.result}</div>
     <div class="report-date">${WEEKDAYS[m.date.getDay()]} ${m.dateStr} · ${m.timeStr} Uhr · ${m.label}</div>
   </div>`;
 
-  /* ── Tabellen aus dem HTML extrahieren ── */
   const allTables = [...doc.querySelectorAll('table')];
   const matchTables = allTables.filter(t => {
     const txt = t.textContent;
@@ -1340,7 +1333,6 @@ function renderReport(html, m) {
     return out;
   }
 
-  /* liga.nu packt alles in EINE Tabelle; einzellige "Einzelspiele"/"Doppelspiele"-Zeilen trennen Abschnitte */
   const bigTable = matchTables[0];
   const sections = [];
   let curSection = null;
@@ -1379,7 +1371,6 @@ function renderReport(html, m) {
         out += '<tr>' + cells.map(c => {
           const txt = c.textContent.trim();
           const isScoreCol = /satz|matches|sätze|games/i.test(txt);
-          /* Teamnamen-Zellen bekommen colspan=3 (Nr + Name + leer), damit Spalten korrekt ausgerichtet sind */
           const span = isScoreCol ? (c.colSpan > 1 ? c.colSpan : 1) : Math.max(c.colSpan || 1, 3);
           const cs = span > 1 ? ` colspan="${span}"` : '';
           const rs = c.rowSpan > 1 ? ` rowspan="${c.rowSpan}"` : '';
@@ -1387,7 +1378,6 @@ function renderReport(html, m) {
         }).join('') + '</tr>';
 
       } else if (isDoppel && !isTotal && cells.length >= 10) {
-        /* Kombinierte Doppel-Zeile aufteilen: "3"-Zellen entfernen, pro Spieler eine Zeile */
         const filtered = cells.filter((_, i) => i !== 1 && i !== 4);
         const splitNl  = t => t.split('\n').map(s => s.trim()).filter(s => s && s !== '...');
         const homeSeeds   = splitNl(filtered[0]?.textContent || '');
@@ -1397,7 +1387,6 @@ function renderReport(html, m) {
         const scoresCells = filtered.slice(4);
         const numPairs    = Math.max(homePlayers.length, awayPlayers.length, 1);
         for (let i = 0; i < numPairs; i++) {
-          /* "(Zahl)"-Klammern aus Doppel-Namen entfernen */
           const hName = esc((homePlayers[i] || '').replace(/\s*\(\d+\)\s*/g, '').trim());
           const aName = esc((awayPlayers[i] || '').replace(/\s*\(\d+\)\s*/g, '').trim());
           const cls = isClubPlayer ? ' class="club-player"' : '';
@@ -1424,7 +1413,6 @@ function renderReport(html, m) {
         out += `<tr${cls}>` + cells.map(c => {
           const origTxt = c.textContent.trim();
           const cs = c.colSpan > 1 ? ` colspan="${c.colSpan}"` : '';
-          /* Spielername (hat Buchstaben und Klammer): <br> vor "(" für zweite Zeile */
           if (!isTotal && /[a-zA-ZäöüÄÖÜß]/.test(origTxt) && origTxt.includes('(')) {
             const idx = origTxt.indexOf('(');
             return `<td${cs}>${esc(origTxt.slice(0, idx).trim())}<br>${esc(origTxt.slice(idx))}</td>`;
@@ -1522,7 +1510,7 @@ function toggleMeineAuswahlMode() {
   }
 }
 
-/* ── Meine Auswahl: Langdruck (1s) löscht gespeicherte Auswahl */
+/* ── Meine Auswahl: Langdruck (3s) löscht gespeicherte Auswahl */
 (function() {
   const btn = document.getElementById('btn-meine-auswahl');
   let pressTimer = null;
@@ -1552,7 +1540,6 @@ function toggleMeineAuswahlMode() {
     pressTimer = null;
   }
 
-  /* Touch: preventDefault verhindert iOS-Kontextmenü und synthetische Mouse-Events */
   btn.addEventListener('touchstart', function(e) {
     e.preventDefault();
     isTouch = true;
@@ -1573,7 +1560,6 @@ function toggleMeineAuswahlMode() {
     setTimeout(function() { isTouch = false; }, 600);
   });
 
-  /* Maus (Desktop) */
   btn.addEventListener('mousedown',  function() { if (!isTouch) startTimer(); });
   btn.addEventListener('mouseup',    function() { if (!isTouch) cancelTimer(); });
   btn.addEventListener('mouseleave', function() { if (!isTouch) cancelTimer(); });
