@@ -621,7 +621,7 @@ function buildTeamCSS(leagues) {
 }
 
 function formatTeamLabel(label) {
-  const m = label.match(/^(.*?)\s+((?:Kreis|Bezirks|Münsterland|Verbands|Landes|Westfalen)\S*.*)$/i);
+  const m = label.match(/^(.*?)\s+((?:Kreis|Bezirks|Münsterland|Verbands|Landes|Westfalen|Generali)\S*.*)$/i);
   if (m) return esc(m[1]) + '<br><span style="font-size:0.78rem;opacity:0.8">' + esc(m[2]) + '</span>';
   return esc(label);
 }
