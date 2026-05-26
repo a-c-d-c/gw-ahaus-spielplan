@@ -339,6 +339,7 @@
   .report-table tr.club-player td { color: #fff; }
   .set-win  { color: #82c9a0; font-weight: 600; }
   .set-loss { color: #c47c7c; }
+  .set-draw { color: #d4b84a; font-weight: 600; }
 
   .card-tag-row {
     text-align: center;
@@ -1398,8 +1399,8 @@ function renderReport(html, m) {
               const t = sc.textContent.trim();
               if (/^\d+:\d+$/.test(t)) {
                 const [a, b] = t.split(':').map(Number);
-                const win = m.isHome ? a > b : b > a;
-                out += `<td><span class="${win ? 'set-win' : 'set-loss'}">${esc(t)}</span></td>`;
+                const setCls = a === b ? 'set-draw' : (m.isHome ? a > b : b > a) ? 'set-win' : 'set-loss';
+                out += `<td><span class="${setCls}">${esc(t)}</span></td>`;
               } else {
                 out += `<td>${esc(t)}</td>`;
               }
@@ -1420,8 +1421,8 @@ function renderReport(html, m) {
           let txt = esc(origTxt);
           if (/^\d+:\d+$/.test(origTxt)) {
             const [a, b] = origTxt.split(':').map(Number);
-            const win = m.isHome ? a > b : b > a;
-            txt = `<span class="${win ? 'set-win' : 'set-loss'}">${txt}</span>`;
+            const setCls = a === b ? 'set-draw' : (m.isHome ? a > b : b > a) ? 'set-win' : 'set-loss';
+            txt = `<span class="${setCls}">${txt}</span>`;
           }
           return `<td${cs}>${txt}</td>`;
         }).join('') + '</tr>';
