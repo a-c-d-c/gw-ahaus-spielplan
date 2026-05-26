@@ -1570,6 +1570,7 @@ function toggleMeineAuswahlMode() {
   await loadAllData();
   setInterval(updateCountdowns, 1000);
 })();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
 </html>
