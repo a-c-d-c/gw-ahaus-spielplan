@@ -745,13 +745,15 @@ async function initLeagues() {
 function sortLeagues(leagues) {
   // Haupt-Kategorie: Jugend(0) < Damen(1) < Herren(2) < Rest(3)
   function mainCat(label) {
-    const gen = /generali/i.test(label);
-    if (isJugend(label))                          return 0;
-    if (/damen/i.test(label)  && !gen)            return 1;
-    if (/herren/i.test(label) && !gen)            return 2;
-    if (/damen/i.test(label)  &&  gen)            return 3;
-    if (/herren/i.test(label) &&  gen)            return 4;
-    return 5;
+    const gen      = /generali/i.test(label);
+    const gemischt = /\bgemischt/i.test(label) && !/\bU\d+/i.test(label);
+    if (isJugend(label))               return 0;
+    if (/damen/i.test(label)  && !gen) return 1;
+    if (/herren/i.test(label) && !gen) return 2;
+    if (gemischt && !gen)              return 3;
+    if (/damen/i.test(label)  &&  gen) return 4;
+    if (/herren/i.test(label) &&  gen) return 5;
+    return 6;
   }
   // U-Klasse als Zahl (U8→8, U10→10, U12→12, U15→15, U18→18)
   function uNum(label) {
