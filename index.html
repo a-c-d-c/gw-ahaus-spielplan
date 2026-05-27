@@ -632,13 +632,21 @@ const PALETTE_HERREN = [
   [  6,  94,  28],
   [  3,  78,  22],
 ];
+const PALETTE_GEMISCHT = [
+  [255, 225,  80],
+  [230, 190,  50],
+  [200, 155,  25],
+  [165, 120,  10],
+  [130,  90,   5],
+];
 function isJugend(label) {
   return /\bU\d+|\bgemischt\b|\bjunior|\bmixed\b/i.test(label);
 }
 function teamColor(label, catIdx) {
-  if (isJugend(label))       return PALETTE_JUGEND[catIdx % PALETTE_JUGEND.length];
-  if (/damen/i.test(label))  return PALETTE_DAMEN[catIdx  % PALETTE_DAMEN.length];
-  if (/herren/i.test(label)) return PALETTE_HERREN[catIdx % PALETTE_HERREN.length];
+  if (isJugend(label))           return PALETTE_JUGEND[catIdx  % PALETTE_JUGEND.length];
+  if (/damen/i.test(label))      return PALETTE_DAMEN[catIdx   % PALETTE_DAMEN.length];
+  if (/herren/i.test(label))     return PALETTE_HERREN[catIdx  % PALETTE_HERREN.length];
+  if (/\bgemischt/i.test(label)) return PALETTE_GEMISCHT[catIdx % PALETTE_GEMISCHT.length];
   return PALETTE_JUGEND[catIdx % PALETTE_JUGEND.length];
 }
 
@@ -796,10 +804,12 @@ function applyLeagues() {
       l.color = palette[idx];
     });
   }
-  spreadColors(LEAGUES.filter(l => isJugend(l.label)),            PALETTE_JUGEND);
-  spreadColors(LEAGUES.filter(l => /damen/i.test(l.label)),       PALETTE_DAMEN);
-  spreadColors(LEAGUES.filter(l => /herren/i.test(l.label)),      PALETTE_HERREN);
-  LEAGUES.filter(l => !isJugend(l.label) && !/damen|herren/i.test(l.label))
+  const gemischtAdult = l => /\bgemischt/i.test(l.label) && !/\bU\d+/i.test(l.label);
+  spreadColors(LEAGUES.filter(l => isJugend(l.label)),      PALETTE_JUGEND);
+  spreadColors(LEAGUES.filter(l => /damen/i.test(l.label)), PALETTE_DAMEN);
+  spreadColors(LEAGUES.filter(l => /herren/i.test(l.label)),PALETTE_HERREN);
+  spreadColors(LEAGUES.filter(gemischtAdult),               PALETTE_GEMISCHT);
+  LEAGUES.filter(l => !isJugend(l.label) && !/damen|herren/i.test(l.label) && !gemischtAdult(l))
          .forEach(l => l.color = PALETTE_JUGEND[0]);
   document.getElementById('dynamic-team-css').textContent = buildTeamCSS(LEAGUES);
   LEAGUES.forEach(l => { if (showTeams[l.team] === undefined) showTeams[l.team] = true; });
