@@ -734,12 +734,18 @@ function sortLeagues(leagues) {
 
 function applyLeagues() {
   LEAGUES = sortLeagues(LEAGUES);
-  const catIdx = {};
-  LEAGUES.forEach(l => {
-    const cat = isJugend(l.label) ? 'j' : /damen/i.test(l.label) ? 'd' : 'h';
-    catIdx[cat] = (catIdx[cat] || 0);
-    l.color = teamColor(l.label, catIdx[cat]++);
-  });
+  function spreadColors(teams, palette) {
+    const n = teams.length;
+    teams.forEach((l, i) => {
+      const idx = n <= 1 ? 0 : Math.round(i / (n - 1) * (palette.length - 1));
+      l.color = palette[idx];
+    });
+  }
+  spreadColors(LEAGUES.filter(l => isJugend(l.label)),            PALETTE_JUGEND);
+  spreadColors(LEAGUES.filter(l => /damen/i.test(l.label)),       PALETTE_DAMEN);
+  spreadColors(LEAGUES.filter(l => /herren/i.test(l.label)),      PALETTE_HERREN);
+  LEAGUES.filter(l => !isJugend(l.label) && !/damen|herren/i.test(l.label))
+         .forEach(l => l.color = PALETTE_JUGEND[0]);
   document.getElementById('dynamic-team-css').textContent = buildTeamCSS(LEAGUES);
   LEAGUES.forEach(l => { if (showTeams[l.team] === undefined) showTeams[l.team] = true; });
   buildTeamButtons();
