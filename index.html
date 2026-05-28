@@ -26,8 +26,7 @@
   .header { text-align: center; margin-bottom: 20px; position: relative; }
   .header-title { display: flex; align-items: center; justify-content: center; gap: 12px; }
   .btn-info {
-    position: absolute;
-    top: 0; right: 0;
+    position: absolute; top: 0; right: 0;
     width: 28px; height: 28px;
     border-radius: 50%;
     border: 1px solid #3a3f60;
@@ -37,7 +36,7 @@
     font-weight: 700;
     font-style: italic;
     cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
+    display: inline-flex; align-items: center; justify-content: center;
     font-family: Georgia, serif;
     transition: border-color 0.15s, color 0.15s;
   }
@@ -126,8 +125,8 @@
     margin-top: 8px;
     white-space: nowrap;
   }
-  .nm-date { font-size: 0.88rem; color: #c8cae0; margin-top: 2px; }
   .nm-league:empty { display: none; }
+  .nm-date { font-size: 0.88rem; color: #c8cae0; margin-top: 2px; }
   .nm-right { text-align: right; flex-shrink: 0; }
   .nm-days {
     font-family: 'Bebas Neue', sans-serif;
@@ -242,9 +241,7 @@
   }
   /* Karten-Farben werden dynamisch per JS generiert → siehe #dynamic-team-css */
   .card.home-game, #next-match-box.home-game { border-color: #fff !important; border-width: 2px; }
-  .card.past-game   { filter: brightness(0.58); }
   .card.past-game .result {
-    filter: brightness(1.9);
     font-size: 1.3rem;
     font-family: 'Bebas Neue', sans-serif;
     letter-spacing: 0.05em;
@@ -255,9 +252,9 @@
     cursor: pointer;
     line-height: 1.5;
   }
-  .card.past-game .result.win  { color: #1a6e3a; }
-  .card.past-game .result.loss { color: #8a2020; }
-  .card.past-game .result.draw { color: #7a5a00; }
+  .card.past-game .result.win  { color: #28a856; }
+  .card.past-game .result.loss { color: #e03838; }
+  .card.past-game .result.draw { color: #d4a000; }
   .card.past-game .result.open { background: transparent; color: #444a68; }
   .past-divider     { height: 32px; }
 
@@ -514,12 +511,35 @@
     margin-top: 24px;
     letter-spacing: 0.04em;
   }
+
+  /* ── Settings Button ── */
+  .btn-settings {
+    position: absolute; top: 0; left: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid #3a3f60;
+    background: rgba(144,149,176,0.08);
+    color: #9095b0;
+    font-size: 1rem;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .btn-settings:hover { border-color: #9095b0; color: #fff; }
+
+  /* ── Settings View ── */
+  #settings-view { display: none; }
+  .settings-content { color: #c8cade; font-size: 0.9rem; line-height: 1.7; padding-top: 8px; }
+  .settings-content h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.06em; color: #fff; margin: 18px 0 12px; }
+  .settings-theme-row { display: flex; gap: 8px; }
 </style>
+<style id="theme-override-css"></style>
 <style id="dynamic-team-css"></style>
 </head>
 <body>
 
 <div class="header">
+  <button class="btn-settings" onclick="showSettings()" title="Einstellungen">⚙</button>
   <button class="btn-info" onclick="showInfo()" title="Info">i</button>
   <div class="header-title">
     <img src="logo.png" class="header-logo" alt="TC Grün-Weiß Ahaus Logo" onerror="this.style.display='none'">
@@ -594,14 +614,97 @@
   <div class="info-content" id="info-content"></div>
 </div>
 
+<div id="settings-view">
+  <div class="detail-header">
+    <button class="btn-back" onclick="backToList()">← Zurück</button>
+    <div class="detail-title">Einstellungen</div>
+  </div>
+  <div class="settings-content">
+    <h2>Design</h2>
+    <div class="settings-theme-row">
+      <button class="btn btn-filter" id="btn-theme-dark"  onclick="setTheme('dark')">Dunkel</button>
+      <button class="btn btn-filter" id="btn-theme-light" onclick="setTheme('light')">Hell</button>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ── Konfiguration ─────────────────────────────────────────── */
+/* ── Dynamische Mannschaftsliste ───────────────────────────── */
 const CLUB_NAME      = 'Ahaus';
 const CLUB_TEAMS_URL = 'https://wtv.liga.nu/cgi-bin/WebObjects/nuLigaTENDE.woa/wa/clubTeams?club=26802';
 const LS_STATE       = 'ahaus-state';
 const LS_AUSWAHL     = 'ahaus-meine-auswahl';
 const LS_LEAGUES     = 'ahaus-leagues';
+const LS_THEME       = 'ahaus-theme';
+
+const LIGHT_THEME_CSS = `
+  body { background: #f0f2f8; }
+  .header h1 { color: #1a1d2e; }
+  .header p { color: #5a5f7a; }
+  .nm-label { color: #fff; }
+  .nm-days { color: #fff; }
+  .nm-unit { color: #fff; }
+  .next-match-box.no-match { background: #c8cde4; border-color: #5060a0; color: #1a1d2e; }
+  .next-match-box.no-match .nm-label { color: #1a1d2e; font-weight: 700; }
+  .btn-filter { border-color: #b0b5cc; color: #3a3f60; }
+  .btn-filter:hover { background: #e0e4f0; color: #1a1d2e; border-color: #7a7f9a; }
+  .btn-filter.on { color: #1a1d2e; font-weight: 700; border-color: #5060a0; background: #c8cde4; }
+  .btn-mannschaften { color: #3a3f60; border-color: #b0b5cc; }
+  .btn-mannschaften:hover { background: #e0e4f0; color: #1a1d2e; border-color: #7a7f9a; }
+  .btn-mannschaften.on { color: #1a1d2e; font-weight: 700; border-color: #5060a0; background: #c8cde4; animation: blink 1s step-end infinite; }
+  .mannschaften-wrapper.open { background: #eef0f8; border-color: #b0b5cc; }
+  .mannschaften-wrapper.open .btn-mannschaften { border-color: transparent; background: rgba(60,70,140,0.07); color: #1a1d2e; }
+  .team-row .btn { color: #3a3f60; }
+  .team-row .btn:hover { background: #e0e4f0; color: #1a1d2e; border-color: #7a7f9a; }
+  .btn-close-teams { border-color: #b0b5cc; color: #3a3f60; }
+  .btn-close-teams:hover { color: #1a1d2e; border-color: #7a7f9a; background: #e0e4f0; }
+  .btn-select-all  { color: #3a3f60 !important; border-color: #b0b5cc !important; background: transparent !important; }
+  .btn-select-all:hover  { background: #e0e4f0 !important; color: #1a1d2e !important; border-color: #7a7f9a !important; }
+  .btn-select-all.on  { color: #1a1d2e !important; font-weight: 700 !important; border-color: #5060a0 !important; background: #c8cde4 !important; }
+  .btn-select-none { color: #3a3f60 !important; border-color: #b0b5cc !important; background: transparent !important; }
+  .btn-select-none:hover { background: #e0e4f0 !important; color: #1a1d2e !important; border-color: #7a7f9a !important; }
+  .btn-select-none.on { color: #1a1d2e !important; font-weight: 700 !important; border-color: #5060a0 !important; background: #c8cde4 !important; }
+  .btn-meine-auswahl { color: #3a3f60 !important; border-color: #b0b5cc !important; background: transparent !important; }
+  .btn-meine-auswahl:hover { background: #e0e4f0 !important; color: #1a1d2e !important; border-color: #7a7f9a !important; }
+  .btn-meine-auswahl.on { color: #1a1d2e !important; font-weight: 700 !important; border-color: #5060a0 !important; background: #c8cde4 !important; }
+  #detail-view, #report-view { background: #0f1117; border-radius: 12px; padding: 8px; min-height: 100%; }
+  .btn-info, .btn-settings { border-color: #5a6090; color: #3a3f60; background: rgba(60,70,140,0.08); }
+  .btn-info:hover, .btn-settings:hover { border-color: #3a4080; color: #1a1d2e; background: rgba(60,70,140,0.18); }
+  .btn-back { color: #1a1d2e; border-color: #5a6090; background: rgba(60,70,140,0.08); }
+  .btn-back:hover { color: #0f1020; border-color: #3a4080; background: rgba(60,70,140,0.18); }
+  .detail-title { color: #1a1d2e; }
+  .info-content { color: #1a1d2e; }
+  .info-content h2 { color: #0f1020; }
+  .settings-content { color: #1a1d2e; }
+  .settings-content h2 { color: #0f1020; }
+`;
+
+function setTheme(theme) {
+  const isLight = theme === 'light';
+  document.getElementById('theme-override-css').textContent = isLight ? LIGHT_THEME_CSS : '';
+  document.querySelector('meta[name="theme-color"]').content = isLight ? '#f0f2f8' : '#0f1117';
+  const btnDark  = document.getElementById('btn-theme-dark');
+  const btnLight = document.getElementById('btn-theme-light');
+  if (btnDark)  btnDark.classList.toggle('on', !isLight);
+  if (btnLight) btnLight.classList.toggle('on',  isLight);
+  localStorage.setItem(LS_THEME, theme);
+}
+
+function showSettings() {
+  if (document.getElementById('settings-view').style.display === 'block') { backToList(); return; }
+  document.getElementById('matches-container').style.display = 'none';
+  document.getElementById('update-info').style.display = 'none';
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('report-view').style.display = 'none';
+  document.getElementById('info-view').style.display = 'none';
+  document.getElementById('controls-bar').style.display = 'none';
+  document.getElementById('next-match-box').style.display = 'none';
+  document.getElementById('error-banner').style.display = 'none';
+  document.getElementById('loading-banner').style.display = 'none';
+  document.getElementById('settings-view').style.display = 'block';
+  window.scrollTo(0, 0);
+}
 
 // Kategorie-Paletten — hell → dunkel (jung → alt)
 const PALETTE_JUGEND = [
@@ -688,15 +791,20 @@ function buildTeamCSS(leagues) {
     const border  = toHex(blend(base, [r,g,b], 0.72));
     const tagBg   = toHex(blend(base, [r,g,b], 0.55));
     const dimText = '#' + blend([144,149,176],[r,g,b],0.45).map(x=>x.toString(16).padStart(2,'0')).join('');
-    return `.btn-${l.team}{border-color:rgba(${r},${g},${b},0.28);background:rgba(${r},${g},${b},0.07);color:${dimText};}` +
-           `.btn-${l.team}.on{border-color:${bright};background:${toHex(blend(base,[r,g,b],0.32))};color:#fff;}` +
-           `.card.${l.team}{background:${cardBg};border-color:${border};}` +
+    const btnBg  = `rgba(${r},${g},${b},0.07)`;
+    const btnBdr = `rgba(${r},${g},${b},0.28)`;
+    const onBg   = toHex(blend(base,[r,g,b],0.32));
+    return `.btn-${l.team}{border-color:${btnBdr};background:${btnBg};color:${dimText};}` +
+           `.btn-${l.team}.on{border-color:${bright};background:${onBg};color:#fff;}` +
+           `.team-row .btn-${l.team}:hover{border-color:${btnBdr};background:${btnBg};color:${dimText};}` +
+           `.team-row .btn-${l.team}.on:hover{border-color:${bright};background:${onBg};color:#fff;}` +
+           `.card.${l.team},.next-match-box.${l.team}{background:${cardBg};border-color:${border};}` +
            `.tag-${l.team}{background:${tagBg};color:#fff;font-weight:700;border:1px solid ${border};}`;
   }).join('\n');
 }
 
 function formatTeamLabel(label) {
-  const m = label.match(/^(.*?)\s+((?:Kreis|Bezirks|Münsterland|Verbands|Landes|Westfalen|Generali)\S*.*)$/i);
+  const m = label.match(/^(.*?)\s+((?:Kreis|Bezirks|M\u00fcnsterland|Verbands|Landes|Westfalen|Generali)\S*.*)$/i);
   if (m) return esc(m[1]) + '<br><span style="font-size:0.78rem;opacity:0.8">' + esc(m[2]) + '</span>';
   return esc(label);
 }
@@ -754,7 +862,6 @@ async function initLeagues() {
 }
 
 function sortLeagues(leagues) {
-  // Haupt-Kategorie: Jugend(0) < Damen(1) < Herren(2) < Rest(3)
   function mainCat(label) {
     const gen      = /generali/i.test(label);
     const gemischt = /\bgemischt/i.test(label) && !/\bU\d+/i.test(label);
@@ -766,12 +873,10 @@ function sortLeagues(leagues) {
     if (/herren/i.test(label) &&  gen) return 5;
     return 6;
   }
-  // U-Klasse als Zahl (U8→8, U10→10, U12→12, U15→15, U18→18)
   function uNum(label) {
     const m = label.match(/\bU(\d+)/i);
     return m ? parseInt(m[1]) : 99;
   }
-  // Innerhalb gleicher U-Klasse: Gemischt < Junioren < Juniorinnen < Mixed < Rest
   function subCat(label) {
     if (/gemischt/i.test(label))    return 0;
     if (/junioren\b/i.test(label))  return 1;
@@ -779,7 +884,6 @@ function sortLeagues(leagues) {
     if (/mixed/i.test(label))       return 3;
     return 4;
   }
-  // Altersklasse für Damen/Herren
   function age(label) {
     const m = label.match(/(?:Damen|Herren)\s+(?:U)?(\d+)(?!\s*er)/i);
     return m ? parseInt(m[1]) : 0;
@@ -940,10 +1044,12 @@ function parseLeague(html, league) {
 
     if (!texts.some(t => t.includes(CLUB_NAME))) continue;
 
+    /* Zuletzt gesehenes Datum und Uhrzeit verwenden */
     const dateStr = lastDateStr;
     const timeStr = lastTimeStr;
     if (!dateStr) continue;
 
+    /* Die ersten zwei Team-ähnlichen Zellen = Heim / Gast */
     const teamTexts = texts.filter(looksLikeTeam);
     if (teamTexts.length < 2) continue;
 
@@ -952,6 +1058,7 @@ function parseLeague(html, league) {
 
     if (!homeTeam.includes(CLUB_NAME) && !awayTeam.includes(CLUB_NAME)) continue;
 
+    /* Ergebnis: erste Zelle die genau X:Y enthält (keine Sub-Ergebnisse) */
     let result = 'offen';
     for (const t of texts) {
       if (/^\d+:\d+$/.test(t)) { result = t; break; }
@@ -962,6 +1069,7 @@ function parseLeague(html, league) {
       }
     }
 
+    /* Verlegungshinweis erkennen */
     let note = '';
     for (const t of texts) {
       if (t.toLowerCase().startsWith('ursprünglich')) { note = t; break; }
@@ -969,6 +1077,7 @@ function parseLeague(html, league) {
 
     if (result === 'zurückgezogen') continue;
 
+    /* Spielbericht-Link ("anzeigen") extrahieren */
     let reportUrl = '';
     for (const cell of cells) {
       const a = cell.querySelector('a[href*="meetingReport"]');
@@ -1024,6 +1133,7 @@ async function loadAllData() {
   refreshBtn.disabled = true;
   refreshBtn.classList.add('spinning');
 
+  /* Alle Ligen parallel laden – jede wird sofort angezeigt sobald sie fertig ist */
   allMatches = [];
   const errors = [];
 
@@ -1033,7 +1143,7 @@ async function loadAllData() {
       leagueHtml[league.team] = html;
       league.rank = extractClubRank(html);
       const rankEl = document.getElementById('rank-' + league.team);
-      if (rankEl && league.rank) rankEl.textContent = 'Rang ' + league.rank;
+      if (rankEl && league.rank) rankEl.textContent = 'Rang ' + league.rank;
       allMatches = [...allMatches, ...parseLeague(html, league)]
         .sort((a, b) => a.date - b.date);
       renderNextMatch();
@@ -1112,6 +1222,8 @@ function renderNextMatch() {
     const nmT = document.getElementById('nm-teams');
     nmT.style.flexDirection = 'column'; nmT.style.justifyContent = 'center'; nmT.style.marginTop = '-3rem';
     box.classList.remove('home-game');
+    LEAGUES.forEach(l => box.classList.remove(l.team));
+    box.classList.add('no-match');
     box.style.display = 'flex';
     return;
   }
@@ -1133,12 +1245,17 @@ function renderNextMatch() {
     const nmT2 = document.getElementById('nm-teams');
     nmT2.style.flexDirection = 'column'; nmT2.style.justifyContent = 'center'; nmT2.style.marginTop = '-3rem';
     box.classList.remove('home-game');
+    LEAGUES.forEach(l => box.classList.remove(l.team));
+    box.classList.add('no-match');
     box.style.display = 'flex';
     return;
   }
 
   const nmTr = document.getElementById('nm-teams');
   nmTr.style.flexDirection = ''; nmTr.style.justifyContent = ''; nmTr.style.marginTop = '';
+  box.classList.remove('no-match');
+  LEAGUES.forEach(l => box.classList.remove(l.team));
+  box.classList.add(next.team);
   box.classList.toggle('home-game', next.isHome);
   clearTimeout(_homeBlinkTimer);
   const homeAwaySpan = next.isHome
@@ -1303,14 +1420,14 @@ function renderMatches() {
 
 /* ── Steuerung ─────────────────────────────────────────────── */
 function toggleFilter(name) {
-  const map = { showPast: 'btn-vergangen', showFuture: 'btn-aktuell', showHome: 'btn-heim', showAway: 'btn-auswaerts' };
-  if (name === 'showPast')   showPast   = !showPast;
-  if (name === 'showFuture') showFuture = !showFuture;
+  if (name === 'showPast')   { showPast   = !showPast;   if (showPast)   showFuture = false; }
+  if (name === 'showFuture') { showFuture = !showFuture; if (showFuture) showPast   = false; }
   if (name === 'showHome')   showHome   = !showHome;
   if (name === 'showAway')   showAway   = !showAway;
-  document.getElementById(map[name]).classList.toggle('on',
-    name === 'showPast' ? showPast : name === 'showFuture' ? showFuture : name === 'showHome' ? showHome : showAway
-  );
+  document.getElementById('btn-vergangen').classList.toggle('on', showPast);
+  document.getElementById('btn-aktuell').classList.toggle('on', showFuture);
+  document.getElementById('btn-heim').classList.toggle('on', showHome);
+  document.getElementById('btn-auswaerts').classList.toggle('on', showAway);
   saveState();
   renderNextMatch();
   renderMatches();
@@ -1392,7 +1509,8 @@ function showTable(team) {
     } else {
       const cells = [...row.querySelectorAll('td')];
       if (cells.length < 3) continue;
-      const isClub = row.textContent.includes(CLUB_NAME);
+      const rowText = row.textContent;
+      const isClub = rowText.includes(CLUB_NAME);
       tableHtml += `<tr${isClub ? ' class="club-row"' : ''}>`;
       tableHtml += cells.map(c => `<td>${esc(c.textContent.trim())}</td>`).join('');
       tableHtml += '</tr>';
@@ -1413,6 +1531,7 @@ function backToList() {
   document.getElementById('detail-view').style.display = 'none';
   document.getElementById('report-view').style.display = 'none';
   document.getElementById('info-view').style.display = 'none';
+  document.getElementById('settings-view').style.display = 'none';
   document.getElementById('matches-container').style.display = '';
   document.getElementById('update-info').style.display = '';
   document.getElementById('controls-bar').style.display = '';
@@ -1474,12 +1593,14 @@ function renderReport(html, m) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   let out = '';
 
+  /* ── Header ── */
   out += `<div class="report-match-header">
     <div class="report-teams">${esc(m.homeTeam)} <span style="color:#555a7a">vs.</span> ${esc(m.awayTeam)}</div>
     <div class="report-result ${resultCls(m.result, m.isHome)}">${m.result}</div>
     <div class="report-date">${WEEKDAYS[m.date.getDay()]} ${m.dateStr} · ${m.timeStr} Uhr · ${m.label}</div>
   </div>`;
 
+  /* ── Tabellen aus dem HTML extrahieren ── */
   const allTables = [...doc.querySelectorAll('table')];
   const matchTables = allTables.filter(t => {
     const txt = t.textContent;
@@ -1491,6 +1612,7 @@ function renderReport(html, m) {
     return out;
   }
 
+  /* liga.nu packt alles in EINE Tabelle; einzellige "Einzelspiele"/"Doppelspiele"-Zeilen trennen Abschnitte */
   const bigTable = matchTables[0];
   const sections = [];
   let curSection = null;
@@ -1529,6 +1651,7 @@ function renderReport(html, m) {
         out += '<tr>' + cells.map(c => {
           const txt = c.textContent.trim();
           const isScoreCol = /satz|matches|sätze|games/i.test(txt);
+          /* Teamnamen-Zellen bekommen colspan=3 (Nr + Name + leer), damit Spalten korrekt ausgerichtet sind */
           const span = isScoreCol ? (c.colSpan > 1 ? c.colSpan : 1) : Math.max(c.colSpan || 1, 3);
           const cs = span > 1 ? ` colspan="${span}"` : '';
           const rs = c.rowSpan > 1 ? ` rowspan="${c.rowSpan}"` : '';
@@ -1536,6 +1659,7 @@ function renderReport(html, m) {
         }).join('') + '</tr>';
 
       } else if (isDoppel && !isTotal && cells.length >= 10) {
+        /* Kombinierte Doppel-Zeile aufteilen: "3"-Zellen entfernen, pro Spieler eine Zeile */
         const filtered = cells.filter((_, i) => i !== 1 && i !== 4);
         const splitNl  = t => t.split('\n').map(s => s.trim()).filter(s => s && s !== '...');
         const homeSeeds   = splitNl(filtered[0]?.textContent || '');
@@ -1545,6 +1669,7 @@ function renderReport(html, m) {
         const scoresCells = filtered.slice(4);
         const numPairs    = Math.max(homePlayers.length, awayPlayers.length, 1);
         for (let i = 0; i < numPairs; i++) {
+          /* "(Zahl)"-Klammern aus Doppel-Namen entfernen */
           const hName = esc((homePlayers[i] || '').replace(/\s*\(\d+\)\s*/g, '').trim());
           const aName = esc((awayPlayers[i] || '').replace(/\s*\(\d+\)\s*/g, '').trim());
           const cls = isClubPlayer ? ' class="club-player"' : '';
@@ -1571,6 +1696,7 @@ function renderReport(html, m) {
         out += `<tr${cls}>` + cells.map(c => {
           const origTxt = c.textContent.trim();
           const cs = c.colSpan > 1 ? ` colspan="${c.colSpan}"` : '';
+          /* Spielername (hat Buchstaben und Klammer): <br> vor "(" für zweite Zeile */
           if (!isTotal && /[a-zA-ZäöüÄÖÜß]/.test(origTxt) && origTxt.includes('(')) {
             const idx = origTxt.indexOf('(');
             return `<td${cs}>${esc(origTxt.slice(0, idx).trim())}<br>${esc(origTxt.slice(idx))}</td>`;
@@ -1668,7 +1794,7 @@ function toggleMeineAuswahlMode() {
   }
 }
 
-/* ── Meine Auswahl: Langdruck (3s) löscht gespeicherte Auswahl */
+/* ── Meine Auswahl: Langdruck (1s) löscht gespeicherte Auswahl */
 (function() {
   const btn = document.getElementById('btn-meine-auswahl');
   let pressTimer = null;
@@ -1698,6 +1824,7 @@ function toggleMeineAuswahlMode() {
     pressTimer = null;
   }
 
+  /* Touch: preventDefault verhindert iOS-Kontextmenü und synthetische Mouse-Events */
   btn.addEventListener('touchstart', function(e) {
     e.preventDefault();
     isTouch = true;
@@ -1718,6 +1845,7 @@ function toggleMeineAuswahlMode() {
     setTimeout(function() { isTouch = false; }, 600);
   });
 
+  /* Maus (Desktop) */
   btn.addEventListener('mousedown',  function() { if (!isTouch) startTimer(); });
   btn.addEventListener('mouseup',    function() { if (!isTouch) cancelTimer(); });
   btn.addEventListener('mouseleave', function() { if (!isTouch) cancelTimer(); });
@@ -1729,6 +1857,7 @@ function toggleMeineAuswahlMode() {
 })();
 
 /* ── Start ─────────────────────────────────────────────────── */
+setTheme(localStorage.getItem(LS_THEME) || 'light');
 (async function startup() {
   await initLeagues();
   await loadAllData();
