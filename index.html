@@ -722,6 +722,7 @@ function showSettings() {
   document.getElementById('next-match-box').style.display = 'none';
   document.getElementById('error-banner').style.display = 'none';
   document.getElementById('loading-banner').style.display = 'none';
+  document.body.style.overflow = 'hidden';
   document.getElementById('settings-view').style.display = 'block';
   window.scrollTo(0, 0);
 }
@@ -1542,8 +1543,8 @@ function showTable(team) {
 
   document.getElementById('matches-container').style.display = 'none';
   document.getElementById('update-info').style.display = 'none';
+  document.body.style.overflow = 'hidden';
   document.getElementById('detail-view').style.display = 'block';
-  window.scrollTo(0, 0);
 }
 
 function backToList() {
@@ -1554,6 +1555,7 @@ function backToList() {
   document.getElementById('matches-container').style.display = '';
   document.getElementById('update-info').style.display = '';
   document.getElementById('controls-bar').style.display = '';
+  document.body.style.overflow = '';
   renderNextMatch();
 }
 
@@ -1567,8 +1569,8 @@ async function showInfo() {
   document.getElementById('next-match-box').style.display = 'none';
   document.getElementById('error-banner').style.display = 'none';
   document.getElementById('loading-banner').style.display = 'none';
+  document.body.style.overflow = 'hidden';
   document.getElementById('info-view').style.display = 'block';
-  window.scrollTo(0, 0);
   const el = document.getElementById('info-content');
   try {
     const res = await fetch('./info.html');
@@ -1589,10 +1591,11 @@ async function showReport(team, reportUrl, matchObj) {
   document.getElementById('update-info').style.display = 'none';
   document.getElementById('detail-view').style.display = 'none';
   const rv = document.getElementById('report-view');
+  document.body.style.overflow = 'hidden';
   rv.style.display = 'block';
+  rv.scrollTop = 0;
   document.getElementById('report-content').innerHTML =
     '<div class="loading-row"><div class="spinner"></div>Spielbericht wird geladen …</div>';
-  window.scrollTo(0, 0);
 
   try {
     const html = await fetchURL(reportUrl);
