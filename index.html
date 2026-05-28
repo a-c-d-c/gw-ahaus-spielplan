@@ -40,7 +40,6 @@
     font-family: Georgia, serif;
     transition: border-color 0.15s, color 0.15s;
   }
-  .btn-info:hover { border-color: #9095b0; color: #fff; }
   #info-view { display: none; }
   .info-content { color: #c8cade; font-size: 0.9rem; line-height: 1.7; padding-top: 8px; }
   .info-content h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.06em; color: #fff; margin: 18px 0 6px; }
@@ -171,7 +170,6 @@
     white-space: nowrap;
     user-select: none;
   }
-  .btn:hover { background: #1a1d2e; color: #9095b0; border-color: #444a68; }
   .btn.on    { color: #fff; font-weight: 700; }
 
   .btn-filter.on { border-color: #9095b0; background: rgba(144,149,176,0.08); }
@@ -196,27 +194,21 @@
   .mannschaften-wrapper.open .btn-mannschaften { border-color: transparent; background: rgba(144,149,176,0.08); }
   .btn-mannschaften::after { content: ' ▼'; font-size: 0.72em; opacity: 0.6; }
   .btn-mannschaften.on::after { content: ' ▲'; opacity: 1; }
-  .btn-mannschaften:hover { background: #1a1d2e; color: #9095b0; border-color: #444a68; }
   .btn-mannschaften.on { color: #fff; font-weight: 700; border-color: #9095b0; background: rgba(144,149,176,0.08); animation: blink 1s step-end infinite; }
   .team-row { display: none; }
   .team-row .btn { color: #9095b0; width: 100%; display: flex; justify-content: space-between; align-items: center; text-align: left; padding: 10px 13px; font-size: 0.88rem; white-space: normal; }
   .top-btns-row .btn { display: block; text-align: center; justify-content: center; }
   .team-btn-rank { font-size: 0.75rem; opacity: 0.7; white-space: nowrap; margin-left: 8px; flex-shrink: 0; cursor: pointer; text-decoration: underline dotted; }
-  .team-btn-rank:hover { opacity: 1; }
   .team-row .btn.on { color: #fff; }
   .team-row.visible { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
   .btn-close-teams { background: transparent; border: 1px solid #2e3150; border-radius: 20px; color: #555a7a; font-size: 0.78rem; font-family: 'DM Sans', sans-serif; font-weight: 600; padding: 7px 0; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; width: 100%; margin-top: 4px; transition: all 0.15s; }
-  .btn-close-teams:hover { color: #9095b0; border-color: #444a68; background: #1a1d2e; }
   .btn-select-all  { color: rgba(110,185,145,0.45) !important; border-color: rgba(110,185,145,0.22); }
-  .btn-select-all:hover  { background: rgba(80,150,110,0.15) !important; border-color: #82c9a0 !important; color: #82c9a0 !important; }
   .btn-select-all.on  { color: #82c9a0 !important; border-color: #4a9068 !important; background: rgba(80,150,110,0.15) !important; font-weight: 700; }
   .btn-select-none { color: rgba(195,115,115,0.45) !important; border-color: rgba(195,115,115,0.22); }
-  .btn-select-none:hover { background: rgba(175,80,80,0.14) !important; border-color: #c47c7c !important; color: #c47c7c !important; }
   .btn-select-none.on { color: #c47c7c !important; border-color: #8a4545 !important; background: rgba(175,80,80,0.14) !important; font-weight: 700; }
   .top-btns-row { display: flex; width: 100%; gap: 6px; }
   .top-btns-row .btn { flex: 1; text-align: center; min-width: 0; padding-top: 17px; padding-bottom: 17px; white-space: normal; line-height: 1.4; }
   .btn-meine-auswahl { color: rgba(190,155,70,0.45) !important; border-color: rgba(190,155,70,0.22); -webkit-touch-callout: none; touch-action: none; }
-  .btn-meine-auswahl:hover { background: rgba(170,130,50,0.15) !important; border-color: #c4a042 !important; color: #d4b054 !important; }
   .btn-meine-auswahl.on { color: #d4b054 !important; border-color: #a07830 !important; background: rgba(170,130,50,0.18) !important; font-weight: 700; }
   /* Team-Farben werden dynamisch per JS generiert → siehe #dynamic-team-css */
 
@@ -259,7 +251,7 @@
   .past-divider     { height: 32px; }
 
   /* ── Detail-View (Tabelle) ── */
-  #detail-view { display: none; overflow-x: hidden; }
+  #detail-view { display: none; }
   .detail-header {
     display: flex;
     align-items: center;
@@ -277,9 +269,7 @@
     cursor: pointer;
     font-family: inherit;
   }
-  .btn-back:hover { border-color: #9095b0; color: #fff; background: rgba(144,149,176,0.2); }
   #report-tabelle-btn { background: rgba(100,140,220,0.15); border-color: #4a6aaa; color: #8aadd4; }
-  #report-tabelle-btn:hover { border-color: #8aadd4; color: #fff; background: rgba(100,140,220,0.28); }
   .detail-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1.4rem;
@@ -434,7 +424,7 @@
     transition: all 0.15s;
     white-space: nowrap;
   }
-  .btn-tabelle:hover { border-color: #7a7f96; color: #e8eaf0; }
+
 
   .card-match {
     display: flex;
@@ -526,13 +516,40 @@
     display: inline-flex; align-items: center; justify-content: center;
     transition: border-color 0.15s, color 0.15s;
   }
-  .btn-settings:hover { border-color: #9095b0; color: #fff; }
+
 
   /* ── Settings View ── */
   #settings-view { display: none; }
+
+  /* ── Vollbild-Overlay für alle Views ── */
+  #info-view, #detail-view, #report-view, #settings-view {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    z-index: 10;
+    background: #0f1117;
+    padding: 20px 16px 40px;
+  }
   .settings-content { color: #c8cade; font-size: 0.9rem; line-height: 1.7; padding-top: 8px; }
   .settings-content h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.06em; color: #fff; margin: 18px 0 12px; }
   .settings-theme-row { display: flex; gap: 8px; }
+
+  @media (hover: hover) {
+    .btn-info:hover { border-color: #9095b0; color: #fff; }
+    .btn-settings:hover { border-color: #9095b0; color: #fff; }
+    .btn:hover { background: #1a1d2e; color: #9095b0; border-color: #444a68; }
+    .btn-mannschaften:hover { background: #1a1d2e; color: #9095b0; border-color: #444a68; }
+    .team-btn-rank:hover { opacity: 1; }
+    .btn-close-teams:hover { color: #9095b0; border-color: #444a68; background: #1a1d2e; }
+    .btn-select-all:hover  { background: rgba(80,150,110,0.15) !important; border-color: #82c9a0 !important; color: #82c9a0 !important; }
+    .btn-select-none:hover { background: rgba(175,80,80,0.14) !important; border-color: #c47c7c !important; color: #c47c7c !important; }
+    .btn-meine-auswahl:hover { background: rgba(170,130,50,0.15) !important; border-color: #c4a042 !important; color: #d4b054 !important; }
+    .btn-back:hover { border-color: #9095b0; color: #fff; background: rgba(144,149,176,0.2); }
+    #report-tabelle-btn:hover { border-color: #8aadd4; color: #fff; background: rgba(100,140,220,0.28); }
+    .btn-tabelle:hover { border-color: #7a7f96; color: #e8eaf0; }
+  }
 </style>
 <style id="theme-override-css"></style>
 <style id="dynamic-team-css"></style>
@@ -649,36 +666,38 @@ const LIGHT_THEME_CSS = `
   .next-match-box.no-match { background: #c8cde4; border-color: #5060a0; color: #1a1d2e; }
   .next-match-box.no-match .nm-label { color: #1a1d2e; font-weight: 700; }
   .btn-filter { border-color: #b0b5cc; color: #3a3f60; }
-  .btn-filter:hover { background: #e0e4f0; color: #1a1d2e; border-color: #7a7f9a; }
   .btn-filter.on { color: #1a1d2e; font-weight: 700; border-color: #5060a0; background: #c8cde4; }
   .btn-mannschaften { color: #3a3f60; border-color: #b0b5cc; }
-  .btn-mannschaften:hover { background: #e0e4f0; color: #1a1d2e; border-color: #7a7f9a; }
   .btn-mannschaften.on { color: #1a1d2e; font-weight: 700; border-color: #5060a0; background: #c8cde4; animation: blink 1s step-end infinite; }
   .mannschaften-wrapper.open { background: #eef0f8; border-color: #b0b5cc; }
   .mannschaften-wrapper.open .btn-mannschaften { border-color: transparent; background: rgba(60,70,140,0.07); color: #1a1d2e; }
   .team-row .btn { color: #3a3f60; }
-  .team-row .btn:hover { background: #e0e4f0; color: #1a1d2e; border-color: #7a7f9a; }
   .btn-close-teams { border-color: #b0b5cc; color: #3a3f60; }
-  .btn-close-teams:hover { color: #1a1d2e; border-color: #7a7f9a; background: #e0e4f0; }
   .btn-select-all  { color: #3a3f60 !important; border-color: #b0b5cc !important; background: transparent !important; }
-  .btn-select-all:hover  { background: #e0e4f0 !important; color: #1a1d2e !important; border-color: #7a7f9a !important; }
   .btn-select-all.on  { color: #1a1d2e !important; font-weight: 700 !important; border-color: #5060a0 !important; background: #c8cde4 !important; }
   .btn-select-none { color: #3a3f60 !important; border-color: #b0b5cc !important; background: transparent !important; }
-  .btn-select-none:hover { background: #e0e4f0 !important; color: #1a1d2e !important; border-color: #7a7f9a !important; }
   .btn-select-none.on { color: #1a1d2e !important; font-weight: 700 !important; border-color: #5060a0 !important; background: #c8cde4 !important; }
   .btn-meine-auswahl { color: #3a3f60 !important; border-color: #b0b5cc !important; background: transparent !important; }
-  .btn-meine-auswahl:hover { background: #e0e4f0 !important; color: #1a1d2e !important; border-color: #7a7f9a !important; }
   .btn-meine-auswahl.on { color: #1a1d2e !important; font-weight: 700 !important; border-color: #5060a0 !important; background: #c8cde4 !important; }
-  #detail-view, #report-view { background: #0f1117; border-radius: 12px; padding: 8px; min-height: 100%; }
+  #info-view, #settings-view { background: #f0f2f8; }
   .btn-info, .btn-settings { border-color: #5a6090; color: #3a3f60; background: rgba(60,70,140,0.08); }
-  .btn-info:hover, .btn-settings:hover { border-color: #3a4080; color: #1a1d2e; background: rgba(60,70,140,0.18); }
   #info-view .btn-back, #settings-view .btn-back { color: #1a1d2e; border-color: #5a6090; background: rgba(60,70,140,0.08); }
-  #info-view .btn-back:hover, #settings-view .btn-back:hover { color: #0f1020; border-color: #3a4080; background: rgba(60,70,140,0.18); }
   #settings-view .detail-title { color: #1a1d2e; }
   .info-content { color: #1a1d2e; }
   .info-content h2 { color: #0f1020; }
   .settings-content { color: #1a1d2e; }
   .settings-content h2 { color: #0f1020; }
+  @media (hover: hover) {
+    .btn-filter:hover { background: #e0e4f0; color: #1a1d2e; border-color: #7a7f9a; }
+    .btn-mannschaften:hover { background: #e0e4f0; color: #1a1d2e; border-color: #7a7f9a; }
+    .team-row .btn:hover { background: #e0e4f0; color: #1a1d2e; border-color: #7a7f9a; }
+    .btn-close-teams:hover { color: #1a1d2e; border-color: #7a7f9a; background: #e0e4f0; }
+    .btn-select-all:hover  { background: #e0e4f0 !important; color: #1a1d2e !important; border-color: #7a7f9a !important; }
+    .btn-select-none:hover { background: #e0e4f0 !important; color: #1a1d2e !important; border-color: #7a7f9a !important; }
+    .btn-meine-auswahl:hover { background: #e0e4f0 !important; color: #1a1d2e !important; border-color: #7a7f9a !important; }
+    .btn-info:hover, .btn-settings:hover { border-color: #3a4080; color: #1a1d2e; background: rgba(60,70,140,0.18); }
+    #info-view .btn-back:hover, #settings-view .btn-back:hover { color: #0f1020; border-color: #3a4080; background: rgba(60,70,140,0.18); }
+  }
 `;
 
 function setTheme(theme) {
@@ -797,8 +816,7 @@ function buildTeamCSS(leagues) {
     const onBg   = toHex(blend(base,[r,g,b],0.32));
     return `.btn-${l.team}{border-color:${btnBdr};background:${btnBg};color:${dimText};}` +
            `.btn-${l.team}.on{border-color:${bright};background:${onBg};color:#fff;}` +
-           `.team-row .btn-${l.team}:hover{border-color:${btnBdr};background:${btnBg};color:${dimText};}` +
-           `.team-row .btn-${l.team}.on:hover{border-color:${bright};background:${onBg};color:#fff;}` +
+           `@media(hover:hover){.team-row .btn-${l.team}:hover{border-color:${btnBdr};background:${btnBg};color:${dimText};}.team-row .btn-${l.team}.on:hover{border-color:${bright};background:${onBg};color:#fff;}}` +
            `.card.${l.team},.next-match-box.${l.team}{background:${cardBg};border-color:${border};}` +
            `.tag-${l.team}{background:${tagBg};color:#fff;font-weight:700;border:1px solid ${border};}`;
   }).join('\n');
