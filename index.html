@@ -337,10 +337,11 @@
     color: #9095b0;
     margin: 18px 0 8px;
   }
+  .report-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .report-table {
-    width: 100%;
     border-collapse: collapse;
     font-size: 0.72rem;
+    min-width: 480px;
   }
   .report-table th {
     text-align: center;
@@ -713,6 +714,22 @@ const LIGHT_THEME_CSS = `
   }
 `;
 
+let _scrollY = 0;
+function lockBodyScroll() {
+  _scrollY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${_scrollY}px`;
+  document.body.style.overflow = 'hidden';
+  document.body.style.width = '100%';
+}
+function unlockBodyScroll() {
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.overflow = '';
+  document.body.style.width = '';
+  window.scrollTo(0, _scrollY);
+}
+
 function setTheme(theme) {
   const isLight = theme === 'light';
   document.getElementById('theme-override-css').textContent = isLight ? LIGHT_THEME_CSS : '';
@@ -735,7 +752,7 @@ function showSettings() {
   document.getElementById('next-match-box').style.display = 'none';
   document.getElementById('error-banner').style.display = 'none';
   document.getElementById('loading-banner').style.display = 'none';
-  document.body.style.overflow = 'hidden';
+  lockBodyScroll();
   document.getElementById('settings-view').style.display = 'block';
   window.scrollTo(0, 0);
 }
@@ -1556,7 +1573,7 @@ function showTable(team) {
 
   document.getElementById('matches-container').style.display = 'none';
   document.getElementById('update-info').style.display = 'none';
-  document.body.style.overflow = 'hidden';
+  lockBodyScroll();
   document.getElementById('detail-view').style.display = 'block';
 }
 
@@ -1568,7 +1585,7 @@ function backToList() {
   document.getElementById('matches-container').style.display = '';
   document.getElementById('update-info').style.display = '';
   document.getElementById('controls-bar').style.display = '';
-  document.body.style.overflow = '';
+  unlockBodyScroll();
   renderNextMatch();
 }
 
@@ -1582,7 +1599,7 @@ async function showInfo() {
   document.getElementById('next-match-box').style.display = 'none';
   document.getElementById('error-banner').style.display = 'none';
   document.getElementById('loading-banner').style.display = 'none';
-  document.body.style.overflow = 'hidden';
+  lockBodyScroll();
   document.getElementById('info-view').style.display = 'block';
   const el = document.getElementById('info-content');
   try {
@@ -1604,7 +1621,7 @@ async function showReport(team, reportUrl, matchObj) {
   document.getElementById('update-info').style.display = 'none';
   document.getElementById('detail-view').style.display = 'none';
   const rv = document.getElementById('report-view');
-  document.body.style.overflow = 'hidden';
+  lockBodyScroll();
   rv.style.display = 'flex';
   document.getElementById('report-scroll').scrollTop = 0;
   document.getElementById('report-content').innerHTML =
@@ -1668,7 +1685,7 @@ function renderReport(html, m) {
   for (const section of sections) {
     const isDoppel = section.label === 'Doppelspiele';
     if (section.label) out += `<div class="report-section">${esc(section.label)}</div>`;
-    out += '<table class="report-table"><thead>';
+    out += '<div class="report-table-wrap"><table class="report-table"><thead>';
 
     let inBody = false;
     for (const row of section.rows) {
@@ -1748,7 +1765,7 @@ function renderReport(html, m) {
     }
 
     if (!inBody) out += '</thead><tbody>';
-    out += '</tbody></table>';
+    out += '</tbody></table></div>';
   }
 
   return out;
