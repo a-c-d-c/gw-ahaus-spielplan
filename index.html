@@ -292,6 +292,7 @@
   }
   #main-content { transition: opacity 3s ease; }
   #matches-container { transition: opacity 1s ease; }
+  #next-match-box    { transition: opacity 1s ease; }
   #pwa-hint-banner {
     display: flex;
     align-items: center;
@@ -1655,10 +1656,12 @@ async function loadAllData() {
 
   errBanner.style.display  = 'none';
   loadBanner.style.display = 'flex';
-  const mc = document.getElementById('matches-container');
+  const mc    = document.getElementById('matches-container');
+  const nmBox = document.getElementById('next-match-box');
   mc.innerHTML = '';
-  mc.style.opacity = '0';
-  document.getElementById('next-match-box').style.display = 'none';
+  mc.style.opacity    = '0';
+  nmBox.style.opacity = '0';
+  nmBox.style.display = 'none';
   document.getElementById('update-info').style.display = 'none';
   refreshBtn.disabled = true;
   refreshBtn.classList.add('spinning');
@@ -1676,7 +1679,6 @@ async function loadAllData() {
       if (rankEl && league.rank) rankEl.textContent = 'Rang ' + league.rank;
       allMatches = [...allMatches, ...parseLeague(html, league)]
         .sort((a, b) => a.date - b.date);
-      renderNextMatch();
     } catch(e) {
       if (attempt < 3) {
         await new Promise(r => setTimeout(r, 1200 * attempt));
@@ -1732,8 +1734,12 @@ async function loadAllData() {
     (missing ? ' · Fehlend: ' + missing : '');
   ui.style.display = 'block';
 
+  renderNextMatch();
   renderMatches();
-  requestAnimationFrame(() => { mc.style.opacity = '1'; });
+  requestAnimationFrame(() => {
+    nmBox.style.opacity = '1';
+    mc.style.opacity    = '1';
+  });
 }
 
 /* ── Nächstes Spiel ────────────────────────────────────────── */
