@@ -292,7 +292,6 @@
   }
   #main-content { transition: opacity 3s ease; }
   #matches-container { transition: opacity 1s ease; }
-  #next-match-box    { transition: opacity 1s ease; }
   #pwa-hint-banner {
     display: flex;
     align-items: center;
@@ -1655,14 +1654,29 @@ async function loadAllData() {
   const refreshBtn = document.getElementById('btn-refresh');
 
   errBanner.style.display  = 'none';
-  loadBanner.style.display = 'flex';
+  loadBanner.style.display = 'none';
   const mc    = document.getElementById('matches-container');
   const nmBox = document.getElementById('next-match-box');
   mc.innerHTML = '';
-  mc.style.opacity    = '0';
-  nmBox.style.opacity = '0';
-  nmBox.style.display = 'none';
+  mc.style.opacity = '0';
   document.getElementById('update-info').style.display = 'none';
+
+  /* Ladeindikator im Nächstes-Spiel-Container anzeigen */
+  LEAGUES.forEach(l => nmBox.classList.remove(l.team));
+  nmBox.classList.remove('home-game');
+  nmBox.classList.add('no-match');
+  nmBox.style.display = 'flex';
+  nmBox.style.opacity = '1';
+  document.getElementById('nm-league').textContent = '';
+  document.getElementById('nm-league').className   = 'nm-league';
+  document.getElementById('nm-date').innerHTML     = '';
+  document.getElementById('nm-days').textContent   = '';
+  document.getElementById('nm-unit').textContent   = '';
+  const nmTeams = document.getElementById('nm-teams');
+  nmTeams.style.flexDirection  = 'column';
+  nmTeams.style.justifyContent = 'center';
+  nmTeams.style.marginTop      = '-3rem';
+  nmTeams.innerHTML = '<div class="loading-row" style="justify-content:center"><div class="spinner"></div>Spieldaten werden geladen …</div>';
   refreshBtn.disabled = true;
   refreshBtn.classList.add('spinning');
 
@@ -1705,7 +1719,6 @@ async function loadAllData() {
 
   refreshBtn.disabled = false;
   refreshBtn.classList.remove('spinning');
-  loadBanner.style.display = 'none';
 
   if (errors.length) {
     errBanner.innerHTML =
@@ -1720,6 +1733,7 @@ async function loadAllData() {
       errors.join('<br>');
     errBanner.style.display = 'block';
     document.getElementById('matches-container').innerHTML = '';
+    renderNextMatch();
     return;
   }
 
@@ -1736,10 +1750,7 @@ async function loadAllData() {
 
   renderNextMatch();
   renderMatches();
-  requestAnimationFrame(() => {
-    nmBox.style.opacity = '1';
-    mc.style.opacity    = '1';
-  });
+  requestAnimationFrame(() => { mc.style.opacity = '1'; });
 }
 
 /* ── Nächstes Spiel ────────────────────────────────────────── */
