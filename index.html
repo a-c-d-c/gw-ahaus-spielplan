@@ -464,6 +464,7 @@
     }
   }
   .info-theme-row { margin-left: auto; display: flex; gap: 8px; }
+  #btn-info-back { color: #ffffff !important; }
   #info-donate {
     margin: 48px 0 0;
     padding: 18px 16px 14px;
@@ -890,7 +891,7 @@
 
 <div id="info-view">
   <div class="detail-header">
-    <button class="btn btn-filter on" onclick="backToList()">Zurück</button>
+    <button class="btn btn-filter on" id="btn-info-back" onclick="backToList()">Zurück</button>
     <div class="info-theme-row">
       <button class="btn btn-filter" id="btn-info-theme-dark"  onclick="setTheme('dark')">Dunkel</button>
       <button class="btn btn-filter" id="btn-info-theme-light" onclick="setTheme('light')">Hell</button>
