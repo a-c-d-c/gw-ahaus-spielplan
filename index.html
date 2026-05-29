@@ -1757,7 +1757,9 @@ async function loadAllData() {
   nmBox.style.opacity = '0';
   renderNextMatch();
   renderMatches();
-  requestAnimationFrame(() => { mc.style.opacity = '1'; nmBox.style.opacity = '1'; });
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { mc.style.opacity = '1'; nmBox.style.opacity = '1'; });
+  });
 }
 
 /* ── Nächstes Spiel ────────────────────────────────────────── */
