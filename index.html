@@ -923,7 +923,7 @@ const CLUB_NAME      = 'Ahaus';
 const CLUB_TEAMS_URL = 'https://wtv.liga.nu/cgi-bin/WebObjects/nuLigaTENDE.woa/wa/clubTeams?club=26802';
 const LS_STATE       = 'ahaus-state';
 const LS_AUSWAHL     = 'ahaus-meine-auswahl';
-const LS_LEAGUES     = 'ahaus-leagues-v5';
+const LS_LEAGUES     = 'ahaus-leagues-v6';
 const LS_THEME       = 'ahaus-theme';
 const LS_STARTS      = 'ahaus-starts';
 
@@ -1175,7 +1175,7 @@ function parseClubTeams(html) {
   const rowRe = /title="Mannschaftsportrait"[^>]*>([^<]+)<\/a>[\s\S]*?href="([^"]*groupPage[^"]*[?&]group=(\d+)[^"]*)">([^<]+)/g;
   let m;
   while ((m = rowRe.exec(decoded)) !== null) {
-    const label    = m[1].trim();
+    const label    = m[1].trim().replace(/grüner ball/gi, 'Gr. Ball');
     const relHref  = m[2];
     const group    = m[3];
     const leagueLabel = m[4].trim().replace(/\s+Gr\.\s*\d+.*$/i, '').trim();
