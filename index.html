@@ -1750,15 +1750,11 @@ async function loadAllData() {
     (missing ? ' · Fehlend: ' + missing : '');
   ui.style.display = 'block';
 
+  mc.style.pointerEvents = '';
+  document.getElementById('controls-bar').style.pointerEvents = '';
   renderNextMatch();
   renderMatches();
-  requestAnimationFrame(() => {
-    mc.style.opacity = '1';
-    mc.addEventListener('transitionend', () => {
-      mc.style.pointerEvents = '';
-      document.getElementById('controls-bar').style.pointerEvents = '';
-    }, { once: true });
-  });
+  requestAnimationFrame(() => { mc.style.opacity = '1'; });
 }
 
 /* ── Nächstes Spiel ────────────────────────────────────────── */
