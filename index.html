@@ -1667,6 +1667,7 @@ async function loadAllData() {
   LEAGUES.forEach(l => nmBox.classList.remove(l.team));
   nmBox.classList.remove('home-game');
   nmBox.classList.add('no-match');
+  nmBox.style.transition = '';
   nmBox.style.display = 'flex';
   nmBox.style.opacity = '1';
   document.getElementById('nm-league').textContent = '';
@@ -1752,9 +1753,11 @@ async function loadAllData() {
 
   mc.style.pointerEvents = '';
   document.getElementById('controls-bar').style.pointerEvents = '';
+  nmBox.style.transition = 'opacity 2s ease';
+  nmBox.style.opacity = '0';
   renderNextMatch();
   renderMatches();
-  requestAnimationFrame(() => { mc.style.opacity = '1'; });
+  requestAnimationFrame(() => { mc.style.opacity = '1'; nmBox.style.opacity = '1'; });
 }
 
 /* ── Nächstes Spiel ────────────────────────────────────────── */
